@@ -1,0 +1,1 @@
+# cmsplugin-filer-svg

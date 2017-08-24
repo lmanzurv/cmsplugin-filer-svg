@@ -1,0 +1,44 @@
+{% load sekizai_tags %}
+
+{% spaceless %}
+{% if link %}
+    <a href="{{ link }}"{% if instance.target_blank %} target="_blank"{% endif %} class="filer_svg_link" {{ instance.link_attributes_str }}>
+{% endif %}
+<img id="filer-svg-{{ instance.id }}" class="filer_svg {{ instance.image_classes }}" alt="{% if instance.image %}{{ instance.image.original_filename }}{% endif %}"
+    {% if 'admin' in request.path or placeholder == 'navbar brand' or placeholder == 'feature image' %}
+        src="
+            {% if instance.image %}
+                {{ instance.image.url }}
+            {% else %}
+                {{ instance.image_url }}
+            {% endif %}
+        "
+        {% if 'admin' in request.path %} width="100"{% endif %}
+    {% else %}
+        data-src="
+            {% if instance.image %}
+                {{ instance.image.url }}
+            {% else %}
+                {{ instance.image_url }}
+            {% endif %}
+        " style="display:none;"
+    {% endif %}>
+{% if link %}
+    </a>
+{% endif %}
+{% endspaceless %}
+
+{% if 'admin' not in request.path %}
+    {% addtoblock "js" %}
+        <script type="text/javascript">
+            window.addEventListener('load', function() {
+                $('.filer_svg').each(function() {
+                    var $image = $(this);
+                    if($image.attr('data-src')) {
+                        $image.attr('src', $image.data('src')).css('display', '');
+                    }
+                });
+            });
+        </script>
+    {% endaddtoblock %}
+{% endif %}
